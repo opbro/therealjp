@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>John Phillips | Model Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #111111;
+            --bg-card: #161616;
+            --text-primary: #f0ece4;
+            --text-secondary: #8a8579;
+            --text-muted: #5a5650;
+            --accent: #c9b99a;
+            --accent-dim: rgba(201, 185, 154, 0.15);
+            --serif: 'Cormorant Garamond', Georgia, serif;
+            --sans: 'Outfit', sans-serif;
+            --transition: cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scrollbar-width: thin;
+            scrollbar-color: var(--text-muted) var(--bg-primary);
+        }
+
+        body {
+            font-family: var(--sans);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* === ENTER SCREEN === */
+        .enter-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-primary);
+            cursor: pointer;
+            transition: opacity 1.2s ease, visibility 1.2s ease;
+        }
+
+        .enter-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .enter-bg {
+            position: absolute;
+            inset: 0;
+            background: url('images/hero.png') center center / cover no-repeat;
+            opacity: 0;
+            transform: scale(1.08);
+            animation: enterBgReveal 2s var(--transition) 0.3s forwards;
+        }
+
+        @keyframes enterBgReveal {
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .enter-bg::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at center, rgba(10,10,10,0.45) 0%, rgba(10,10,10,0.82) 100%);
+        }
+
+        .enter-content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 1rem;
+        }
+
+        .enter-label {
+            font-family: var(--sans);
+            font-size: 0.6rem;
+            font-weight: 400;
+            letter-spacing: 0.6em;
+            text-transform: uppercase;
+            color: var(--accent);
+            opacity: 0;
+            transform: translateY(15px);
+            animation: fadeUp 1s var(--transition) 0.8s forwards;
+        }
+
+        .enter-name {
+            font-family: var(--serif);
+            font-size: clamp(3rem, 10vw, 8rem);
+            font-weight: 300;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--text-primary);
+            line-height: 1;
+            opacity: 0;
+            transform: translateY(25px);
+            animation: fadeUp 1.2s var(--transition) 1s forwards;
+        }
+
+        .enter-line {
+            width: 60px;
+            height: 1px;
+            background: var(--accent);
+            opacity: 0;
+            animation: fadeUp 1s var(--transition) 1.4s forwards;
+        }
+
+        .enter-prompt {
+            font-family: var(--sans);
+            font-size: 0.7rem;
+            font-weight: 200;
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            opacity: 0;
+            animation: fadeUp 1s var(--transition) 1.6s forwards, enterPulse 2.5s ease-in-out 2.6s infinite;
+        }
+
+        .enter-prompt kbd {
+            display: inline-block;
+            font-family: var(--sans);
+            font-size: 0.6rem;
+            font-weight: 400;
+            letter-spacing: 0.15em;
+            color: var(--accent);
+            border: 1px solid rgba(201, 185, 154, 0.3);
+            padding: 0.35rem 0.8rem;
+            margin: 0 0.3rem;
+            border-radius: 3px;
+            background: rgba(201, 185, 154, 0.06);
+        }
+
+        @keyframes enterPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .enter-footer {
+            position: absolute;
+            bottom: 2.5rem;
+            left: 0;
+            right: 0;
+            text-align: center;
+            opacity: 0;
+            animation: fadeUp 1s var(--transition) 2s forwards;
+        }
+
+        .enter-footer span {
+            font-family: var(--serif);
+            font-size: 0.75rem;
+            font-style: italic;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+        }
+
+        /* Lock scroll while enter screen is visible */
+        body.locked {
+            overflow: hidden;
+        }
+
+        /* === GRAIN OVERLAY === */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* === NAVIGATION === */
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            padding: 1.5rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(to bottom, rgba(10,10,10,0.95), transparent);
+            transition: background 0.5s ease;
+        }
+
+        nav.scrolled {
+            background: rgba(10, 10, 10, 0.97);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .nav-logo {
+            font-family: var(--serif);
+            font-size: 1.4rem;
+            font-weight: 300;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-family: var(--sans);
+            font-size: 0.7rem;
+            font-weight: 300;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            text-decoration: none;
+            position: relative;
+            transition: color 0.4s ease;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--accent);
+            transition: width 0.4s var(--transition);
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            width: 28px;
+            height: 20px;
+            position: relative;
+            z-index: 101;
+        }
+
+        .nav-menu-btn span {
+            display: block;
+            width: 100%;
+            height: 1px;
+            background: var(--text-primary);
+            position: absolute;
+            left: 0;
+            transition: all 0.4s var(--transition);
+        }
+
+        .nav-menu-btn span:nth-child(1) { top: 0; }
+        .nav-menu-btn span:nth-child(2) { top: 50%; }
+        .nav-menu-btn span:nth-child(3) { top: 100%; }
+
+        .nav-menu-btn.active span:nth-child(1) { top: 50%; transform: rotate(45deg); }
+        .nav-menu-btn.active span:nth-child(2) { opacity: 0; }
+        .nav-menu-btn.active span:nth-child(3) { top: 50%; transform: rotate(-45deg); }
+
+        /* === HERO === */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-start;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            background: url('images/hero.png') center center / cover no-repeat;
+        }
+
+        .hero-bg::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to right, rgba(10,10,10,0.85) 0%, rgba(10,10,10,0.4) 50%, rgba(10,10,10,0.2) 100%);
+        }
+
+        .hero-bg::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 30%;
+            background: linear-gradient(to top, var(--bg-primary), transparent);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            padding: 0 3rem 6rem;
+            max-width: 700px;
+        }
+
+        .hero-tag {
+            font-family: var(--sans);
+            font-size: 0.65rem;
+            font-weight: 400;
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 1s var(--transition) 0.3s forwards;
+        }
+
+        .hero-title {
+            font-family: var(--serif);
+            font-size: clamp(3rem, 7vw, 6.5rem);
+            font-weight: 300;
+            line-height: 1.05;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeUp 1s var(--transition) 0.5s forwards;
+        }
+
+        .hero-title em {
+            font-style: italic;
+            color: var(--accent);
+        }
+
+        .hero-sub {
+            font-family: var(--sans);
+            font-size: 0.85rem;
+            font-weight: 200;
+            letter-spacing: 0.15em;
+            color: var(--text-secondary);
+            margin-bottom: 2.5rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 1s var(--transition) 0.7s forwards;
+        }
+
+        .hero-ctas {
+            display: flex;
+            gap: 1.2rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 1s var(--transition) 0.9s forwards;
+        }
+
+        .btn {
+            font-family: var(--sans);
+            font-size: 0.7rem;
+            font-weight: 400;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            text-decoration: none;
+            padding: 1rem 2.2rem;
+            border: 1px solid var(--text-muted);
+            color: var(--text-primary);
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.5s var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: var(--accent);
+            transition: left 0.5s var(--transition);
+            z-index: -1;
+        }
+
+        .btn:hover {
+            border-color: var(--accent);
+            color: var(--bg-primary);
+        }
+
+        .btn:hover::before {
+            left: 0;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: var(--bg-primary);
+        }
+
+        .btn-primary::before {
+            background: var(--text-primary);
+        }
+
+        .hero-scroll {
+            position: absolute;
+            bottom: 2rem;
+            right: 3rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.6rem;
+            opacity: 0;
+            animation: fadeUp 1s var(--transition) 1.2s forwards;
+        }
+
+        .hero-scroll span {
+            font-size: 0.6rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            writing-mode: vertical-rl;
+        }
+
+        .scroll-line {
+            width: 1px;
+            height: 50px;
+            background: var(--text-muted);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scroll-line::after {
+            content: '';
+            position: absolute;
+            top: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--accent);
+            animation: scrollDown 2s ease infinite;
+        }
+
+        @keyframes scrollDown {
+            0% { top: -100%; }
+            100% { top: 100%; }
+        }
+
+        @keyframes fadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* === SECTIONS === */
+        section {
+            padding: 8rem 3rem;
+        }
+
+        .section-label {
+            font-family: var(--sans);
+            font-size: 0.6rem;
+            font-weight: 400;
+            letter-spacing: 0.5em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-family: var(--serif);
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            font-weight: 300;
+            line-height: 1.15;
+            margin-bottom: 1rem;
+        }
+
+        .section-desc {
+            font-size: 0.9rem;
+            font-weight: 200;
+            color: var(--text-secondary);
+            max-width: 500px;
+            line-height: 1.7;
+        }
+
+        .divider {
+            width: 60px;
+            height: 1px;
+            background: var(--accent);
+            margin: 2rem 0;
+        }
+
+        /* === PORTFOLIO === */
+        #portfolio {
+            background: var(--bg-secondary);
+        }
+
+        .portfolio-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .portfolio-filters {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            font-family: var(--sans);
+            font-size: 0.65rem;
+            font-weight: 300;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem 0;
+            position: relative;
+            transition: color 0.4s ease;
+        }
+
+        .filter-btn::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 0; height: 1px;
+            background: var(--accent);
+            transition: width 0.4s var(--transition);
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            color: var(--text-primary);
+        }
+
+        .filter-btn.active::after {
+            width: 100%;
+        }
+
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .portfolio-item {
+            position: relative;
+            aspect-ratio: 3/4;
+            overflow: hidden;
+            background: var(--bg-card);
+            cursor: pointer;
+        }
+
+        .portfolio-item-inner {
+            width: 100%; height: 100%;
+            background: linear-gradient(135deg, #1e1c19 0%, #14120f 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.8s var(--transition);
+        }
+
+        .portfolio-item:hover .portfolio-item-inner {
+            transform: scale(1.05);
+        }
+
+        .portfolio-item-inner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .portfolio-placeholder {
+            font-family: var(--serif);
+            font-size: 4rem;
+            font-weight: 300;
+            color: rgba(201,185,154,0.08);
+            user-select: none;
+        }
+
+        .portfolio-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(10,10,10,0.9) 0%, transparent 50%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 1.5rem;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .portfolio-item:hover .portfolio-overlay {
+            opacity: 1;
+        }
+
+        .portfolio-overlay h4 {
+            font-family: var(--serif);
+            font-size: 1.2rem;
+            font-weight: 400;
+            margin-bottom: 0.3rem;
+        }
+
+        .portfolio-overlay p {
+            font-size: 0.65rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--accent);
+        }
+
+        /* === BRAND VALUE === */
+        #brand-value {
+            background: var(--bg-primary);
+        }
+
+        .brand-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            margin-top: 3rem;
+        }
+
+        .brand-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .stat-card {
+            padding: 1.8rem;
+            border: 1px solid rgba(255,255,255,0.05);
+            background: var(--bg-card);
+            transition: border-color 0.4s ease, transform 0.4s var(--transition);
+        }
+
+        .stat-card:hover {
+            border-color: rgba(201,185,154,0.2);
+            transform: translateY(-3px);
+        }
+
+        .stat-label {
+            font-size: 0.6rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 0.6rem;
+        }
+
+        .stat-value {
+            font-family: var(--serif);
+            font-size: 1.6rem;
+            font-weight: 300;
+            color: var(--text-primary);
+        }
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .brand-text blockquote {
+            font-family: var(--serif);
+            font-size: 1.4rem;
+            font-weight: 300;
+            font-style: italic;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            border-left: 2px solid var(--accent);
+            padding-left: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .tags {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .tag {
+            font-size: 0.6rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            padding: 0.5rem 1rem;
+            border: 1px solid rgba(201,185,154,0.2);
+            color: var(--accent);
+        }
+
+        /* === ABOUT === */
+        #about {
+            background: var(--bg-secondary);
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 4rem;
+            margin-top: 3rem;
+        }
+
+        .about-image {
+            aspect-ratio: 3/4;
+            background: linear-gradient(135deg, #1e1c19 0%, #14120f 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .about-image::before {
+            content: '';
+            position: absolute;
+            inset: 1.5rem;
+            border: 1px solid rgba(201,185,154,0.1);
+        }
+
+        .about-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .about-image-placeholder {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--serif);
+            font-size: 6rem;
+            font-weight: 300;
+            color: rgba(201,185,154,0.06);
+        }
+
+        .about-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .about-content p {
+            font-size: 0.95rem;
+            font-weight: 200;
+            line-height: 1.9;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .timeline {
+            margin-top: 2rem;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 1.5rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+
+        .timeline-year {
+            font-family: var(--serif);
+            font-size: 1.1rem;
+            color: var(--accent);
+            min-width: 60px;
+        }
+
+        .timeline-text {
+            font-size: 0.85rem;
+            font-weight: 200;
+            color: var(--text-secondary);
+        }
+
+        /* === CONTACT === */
+        #contact {
+            background: var(--bg-primary);
+            position: relative;
+        }
+
+        #contact::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 50%;
+            transform: translateX(-50%);
+            width: 1px;
+            height: 80px;
+            background: linear-gradient(to bottom, var(--accent), transparent);
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            margin-top: 3rem;
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .contact-block h4 {
+            font-size: 0.6rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-block a,
+        .contact-block p {
+            font-family: var(--serif);
+            font-size: 1.2rem;
+            font-weight: 300;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .contact-block a:hover {
+            color: var(--accent);
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            font-family: var(--sans);
+            font-size: 0.85rem;
+            font-weight: 200;
+            color: var(--text-primary);
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 1rem 0;
+            outline: none;
+            transition: border-color 0.4s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: var(--accent);
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: var(--text-muted);
+            letter-spacing: 0.1em;
+        }
+
+        .form-group textarea {
+            resize: none;
+            height: 100px;
+        }
+
+        .contact-socials {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .contact-socials a {
+            font-size: 0.65rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .contact-socials a:hover {
+            color: var(--accent);
+        }
+
+        .download-comp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-top: 1.5rem;
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--accent);
+            text-decoration: none;
+            padding: 1rem 1.5rem;
+            border: 1px solid rgba(201,185,154,0.3);
+            transition: all 0.4s ease;
+        }
+
+        .download-comp:hover {
+            background: var(--accent-dim);
+        }
+
+        .download-comp svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* === FOOTER === */
+        footer {
+            padding: 3rem;
+            border-top: 1px solid rgba(255,255,255,0.04);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        footer p {
+            font-size: 0.65rem;
+            letter-spacing: 0.15em;
+            color: var(--text-muted);
+        }
+
+        .footer-slogan {
+            font-family: var(--serif);
+            font-size: 0.9rem;
+            font-style: italic;
+            color: var(--text-muted);
+        }
+
+        /* === SCROLL ANIMATIONS === */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s var(--transition), transform 0.8s var(--transition);
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* === MOBILE OVERLAY === */
+        .mobile-menu {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-primary);
+            z-index: 99;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        .mobile-menu.open {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .mobile-menu a {
+            font-family: var(--serif);
+            font-size: 2rem;
+            font-weight: 300;
+            color: var(--text-primary);
+            text-decoration: none;
+            letter-spacing: 0.1em;
+            transition: color 0.3s ease;
+        }
+
+        .mobile-menu a:hover {
+            color: var(--accent);
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 1024px) {
+            .brand-grid,
+            .about-grid,
+            .contact-grid {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+
+            .portfolio-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav { padding: 1.2rem 1.5rem; }
+
+            .nav-links { display: none; }
+
+            .nav-menu-btn { display: block; }
+
+            section { padding: 5rem 1.5rem; }
+
+            .hero-content { padding: 0 1.5rem 4rem; }
+
+            .portfolio-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 0.8rem;
+            }
+
+            .brand-stats {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .hero-scroll { display: none; }
+
+            footer {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .portfolio-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .brand-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-ctas {
+                flex-direction: column;
+            }
+
+            .btn {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body class="locked">
+
+    <!-- Enter Screen -->
+    <div class="enter-screen" id="enterScreen">
+        <div class="enter-bg"></div>
+        <div class="enter-content">
+            <p class="enter-label">Portfolio</p>
+            <h1 class="enter-name">John Phillips</h1>
+            <div class="enter-line"></div>
+            <p class="enter-prompt">Press <kbd>Enter</kbd> or click to continue</p>
+        </div>
+        <div class="enter-footer">
+            <span>Defined. Refined. Market-Ready.</span>
+        </div>
+    </div>
+
+    <!-- Background Music -->
+    <audio id="bgMusic" src="background.mp3" loop preload="auto"></audio>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <a href="#" class="nav-logo">John Phillips</a>
+        <ul class="nav-links">
+            <li><a href="#portfolio">Portfolio</a></li>
+            <li><a href="#brand-value">Brand Value</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+        <button class="nav-menu-btn" id="menuBtn" aria-label="Toggle menu">
+            <span></span><span></span><span></span>
+        </button>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="#portfolio" onclick="closeMenu()">Portfolio</a>
+        <a href="#brand-value" onclick="closeMenu()">Brand Value</a>
+        <a href="#about" onclick="closeMenu()">About</a>
+        <a href="#contact" onclick="closeMenu()">Contact</a>
+    </div>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-content">
+            <p class="hero-tag">Professional Male Model</p>
+            <h1 class="hero-title">Built for<br><em>Campaigns.</em></h1>
+            <p class="hero-sub">Campaign &middot; Editorial &middot; Brand Partnerships</p>
+            <div class="hero-ctas">
+                <a href="#portfolio" class="btn btn-primary">View Portfolio</a>
+                <a href="#contact" class="btn">Book Now</a>
+            </div>
+        </div>
+        <div class="hero-scroll">
+            <span>Scroll</span>
+            <div class="scroll-line"></div>
+        </div>
+    </section>
+
+    <!-- Portfolio -->
+    <section id="portfolio">
+        <div class="portfolio-header reveal">
+            <div>
+                <p class="section-label">Portfolio</p>
+                <h2 class="section-title">Selected Work</h2>
+            </div>
+            <div class="portfolio-filters">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="editorial">Editorial</button>
+                <button class="filter-btn" data-filter="commercial">Commercial</button>
+                <button class="filter-btn" data-filter="fitness">Fitness</button>
+                <button class="filter-btn" data-filter="lifestyle">Lifestyle</button>
+                <button class="filter-btn" data-filter="grooming">Grooming</button>
+            </div>
+        </div>
+        <div class="portfolio-grid">
+            <div class="portfolio-item reveal" data-category="editorial">
+                <div class="portfolio-item-inner">
+                    <img src="images/portfolio_01_tailoring.png" alt="Luxury Tailoring Campaign">
+                </div>
+                <div class="portfolio-overlay">
+                    <h4>Luxury Tailoring Campaign</h4>
+                    <p>Editorial</p>
+                </div>
+            </div>
+            <div class="portfolio-item reveal" data-category="commercial">
+                <div class="portfolio-item-inner">
+                    <img src="images/portfolio_02_performance.png" alt="Performance Wear Lookbook">
+                </div>
+                <div class="portfolio-overlay">
+                    <h4>Performance Wear Lookbook</h4>
+                    <p>Commercial</p>
+                </div>
+            </div>
+            <div class="portfolio-item reveal" data-category="fitness">
+                <div class="portfolio-item-inner">
+                    <img src="images/portfolio_03_fitness.png" alt="Athletic Performance Series">
+                </div>
+                <div class="portfolio-overlay">
+                    <h4>Athletic Performance Series</h4>
+                    <p>Fitness</p>
+                </div>
+            </div>
+            <div class="portfolio-item reveal" data-category="lifestyle">
+                <div class="portfolio-item-inner">
+                    <img src="images/portfolio_04_executive.png" alt="Modern Executive Editorial">
+                </div>
+                <div class="portfolio-overlay">
+                    <h4>Modern Executive Editorial</h4>
+                    <p>Lifestyle</p>
+                </div>
+            </div>
+            <div class="portfolio-item reveal" data-category="grooming">
+                <div class="portfolio-item-inner">
+                    <img src="images/portfolio_05_grooming.png" alt="Premium Grooming Campaign">
+                </div>
+                <div class="portfolio-overlay">
+                    <h4>Premium Grooming Campaign</h4>
+                    <p>Grooming</p>
+                </div>
+            </div>
+            <div class="portfolio-item reveal" data-category="editorial">
+                <div class="portfolio-item-inner">
+                    <img src="images/portfolio_06_monochrome.png" alt="Monochrome Editorial">
+                </div>
+                <div class="portfolio-overlay">
+                    <h4>Monochrome Editorial</h4>
+                    <p>Editorial</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Brand Value -->
+    <section id="brand-value">
+        <div class="reveal">
+            <p class="section-label">Market Position</p>
+            <h2 class="section-title">Why I'm Market-Ready</h2>
+            <div class="divider"></div>
+            <p class="section-desc">Positioned for premium menswear, grooming, and performance brands targeting 25–40 professional males.</p>
+        </div>
+        <div class="brand-grid">
+            <div class="brand-stats reveal">
+                <div class="stat-card">
+                    <p class="stat-label">Height</p>
+                    <p class="stat-value">5'8"</p>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-label">Chest</p>
+                    <p class="stat-value">40"</p>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-label">Waist</p>
+                    <p class="stat-value">32"</p>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-label">Suit</p>
+                    <p class="stat-value">40R</p>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-label">Shoe</p>
+                    <p class="stat-value">12 US</p>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-label">Eyes</p>
+                    <p class="stat-value">Brown</p>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-label">Location</p>
+                    <p class="stat-value">New York</p>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-label">Travel</p>
+                    <p class="stat-value">Worldwide</p>
+                </div>
+            </div>
+            <div class="brand-text reveal">
+                <blockquote>
+                    "Precision. Presence. Performance. — Where luxury meets discipline."
+                </blockquote>
+                <div class="tags">
+                    <span class="tag">Menswear</span>
+                    <span class="tag">Performance</span>
+                    <span class="tag">Grooming</span>
+                    <span class="tag">Luxury</span>
+                    <span class="tag">Editorial</span>
+                    <span class="tag">Commercial</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About -->
+    <section id="about">
+        <div class="reveal">
+            <p class="section-label">About</p>
+            <h2 class="section-title">Professional Discipline.<br>Brand Precision.</h2>
+        </div>
+        <div class="about-grid">
+            <div class="about-image reveal">
+                <img src="images/about.png" alt="John Phillips">
+            </div>
+            <div class="about-content reveal">
+                <div class="divider"></div>
+                <p>
+                    <strong style="color: var(--text-primary); font-weight: 400;">John Phillips</strong> is a commercially positioned male model specializing in luxury menswear, performance apparel, and modern lifestyle campaigns. His presence combines structure, confidence, and brand clarity — making him adaptable across editorial and commercial markets.
+                </p>
+                <p>
+                    With a disciplined approach to fitness, grooming, and visual presentation, he delivers consistent, campaign-ready results. Available for editorial shoots, brand partnerships, lookbooks, and runway — internationally.
+                </p>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <span class="timeline-year">2026</span>
+                        <span class="timeline-text">Available for SS26 & FW26 campaign bookings</span>
+                    </div>
+                    <div class="timeline-item">
+                        <span class="timeline-year">Focus</span>
+                        <span class="timeline-text">Premium menswear, performance & grooming brands</span>
+                    </div>
+                    <div class="timeline-item">
+                        <span class="timeline-year">Range</span>
+                        <span class="timeline-text">Editorial, commercial, runway, digital</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact">
+        <div class="reveal">
+            <p class="section-label">Inquiries</p>
+            <h2 class="section-title">Let's Work Together</h2>
+            <div class="divider"></div>
+            <p class="section-desc">Available for campaign, editorial, and brand partnership bookings. Response within 24 hours.</p>
+        </div>
+        <div class="contact-grid">
+            <div class="contact-info reveal">
+                <div class="contact-block">
+                    <h4>Email</h4>
+                    <a href="mailto:jobs@therealjohnphillips.com">jobs@therealjohnphillips.com</a>
+                </div>
+                <div class="contact-block">
+                    <h4>Agent</h4>
+                    <p>Representation pending — direct bookings welcome</p>
+                </div>
+                <div class="contact-block">
+                    <h4>Location</h4>
+                    <p>New York, NY &middot; Available Worldwide</p>
+                </div>
+                <a href="#" class="download-comp">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M12 5v14M5 12l7 7 7-7"/>
+                    </svg>
+                    Download Comp Card
+                </a>
+            </div>
+            <div class="contact-form reveal">
+                <div class="form-group">
+                    <input type="text" placeholder="Your Name" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" placeholder="Email Address" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" placeholder="Company / Brand">
+                </div>
+                <div class="form-group">
+                    <textarea placeholder="Project Details"></textarea>
+                </div>
+                <button class="btn btn-primary" type="button" onclick="handleSubmit()">Send Inquiry</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 JOHN PHILLIPS. ALL RIGHTS RESERVED.</p>
+        <span class="footer-slogan">Defined. Refined. Market-Ready.</span>
+    </footer>
+
+    <script>
+        // Enter screen
+        const enterScreen = document.getElementById('enterScreen');
+        const bgMusic = document.getElementById('bgMusic');
+        let entered = false;
+
+        function enterSite() {
+            if (entered) return;
+            entered = true;
+            bgMusic.volume = 0;
+            bgMusic.play().catch(() => {});
+            // Fade music in
+            let vol = 0;
+            const fadeIn = setInterval(() => {
+                vol = Math.min(vol + 0.02, 0.5);
+                bgMusic.volume = vol;
+                if (vol >= 0.5) clearInterval(fadeIn);
+            }, 40);
+            enterScreen.classList.add('hidden');
+            document.body.classList.remove('locked');
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') enterSite();
+        });
+        enterScreen.addEventListener('click', enterSite);
+
+        // Navbar scroll effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            navbar.classList.toggle('scrolled', window.scrollY > 80);
+        });
+
+        // Mobile menu
+        const menuBtn = document.getElementById('menuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        menuBtn.addEventListener('click', () => {
+            menuBtn.classList.toggle('active');
+            mobileMenu.classList.toggle('open');
+            document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
+        });
+
+        function closeMenu() {
+            menuBtn.classList.remove('active');
+            mobileMenu.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        // Scroll reveal
+        const reveals = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, i) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                    }, i * 80);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+        reveals.forEach(el => observer.observe(el));
+
+        // Portfolio filter
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const portfolioItems = document.querySelectorAll('.portfolio-item');
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                const filter = btn.dataset.filter;
+                portfolioItems.forEach(item => {
+                    if (filter === 'all' || item.dataset.category === filter) {
+                        item.style.display = '';
+                        setTimeout(() => item.style.opacity = '1', 50);
+                    } else {
+                        item.style.opacity = '0';
+                        setTimeout(() => item.style.display = 'none', 400);
+                    }
+                });
+            });
+        });
+
+        // Form handler (GitHub Pages - no backend)
+        function handleSubmit() {
+            const inputs = document.querySelectorAll('.contact-form input, .contact-form textarea');
+            const name = inputs[0].value;
+            const email = inputs[1].value;
+            const company = inputs[2].value;
+            const details = inputs[3].value;
+
+            if (!name || !email) {
+                alert('Please fill in your name and email.');
+                return;
+            }
+
+            // Opens email client as fallback (no backend on GitHub Pages)
+            const subject = encodeURIComponent(`Booking Inquiry from ${name}${company ? ' — ' + company : ''}`);
+            const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\nCompany: ${company}\n\n${details}`);
+            window.location.href = `mailto:jobs@therealjohnphillips.com?subject=${subject}&body=${body}`;
+        }
+    </script>
+
+</body>
+</html>
